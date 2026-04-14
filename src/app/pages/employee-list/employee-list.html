@@ -1,1 +1,104 @@
-<p>employee-list works!</p>
+<div class="container mt-4">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">Employee List</h2>
+    <button class="btn btn-danger" (click)="logout()">Logout</button>
+  </div>
+
+  <div class="row g-2 mb-3">
+    <div class="col-md-8">
+      <input
+        type="text"
+        class="form-control"
+        placeholder="Search by department or designation"
+        [(ngModel)]="searchTerm"
+      />
+    </div>
+
+    <div class="col-md-2">
+      <button class="btn btn-primary w-100" (click)="onSearch()">Search</button>
+    </div>
+
+    <div class="col-md-2">
+      <button class="btn btn-secondary w-100" (click)="resetSearch()">Reset</button>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <a routerLink="/employees/add" class="btn btn-success">Add Employee</a>
+  </div>
+
+  <div *ngIf="loading" class="alert alert-info">
+    Loading employees...
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && employees.length === 0" class="alert alert-warning">
+    No employees found.
+  </div>
+
+  <div class="table-responsive" *ngIf="!loading && employees.length > 0">
+    <table class="table table-bordered table-striped align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>Photo</th>
+          <th>First Name</th>
+          <th>Last Name</th>
+          <th>Email</th>
+          <th>Gender</th>
+          <th>Designation</th>
+          <th>Salary</th>
+          <th>Department</th>
+          <th style="min-width: 210px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let emp of employees">
+          <td>
+            <img
+              [src]="emp.employee_photo"
+              alt="employee"
+              width="60"
+              height="60"
+              style="object-fit: cover; border-radius: 6px;"
+            />
+          </td>
+          <td>{{ emp.first_name }}</td>
+          <td>{{ emp.last_name }}</td>
+          <td>{{ emp.email }}</td>
+          <td>{{ emp.gender }}</td>
+          <td>{{ emp.designation }}</td>
+          <td>{{ emp.salary }}</td>
+          <td>{{ emp.department }}</td>
+          <td>
+          <a
+            [routerLink]="['/employees', emp._id]"
+            class="btn btn-outline-primary btn-sm me-1"
+            title="View"
+          >
+            <i class="bi bi-eye"></i>
+          </a>
+
+          <a
+            [routerLink]="['/employees/edit', emp._id]"
+            class="btn btn-outline-warning btn-sm me-1"
+            title="Edit"
+          >
+            <i class="bi bi-pencil"></i>
+          </a>
+
+          <button
+            class="btn btn-outline-danger btn-sm"
+            (click)="deleteEmployee(emp._id)"
+            title="Delete"
+          >
+            <i class="bi bi-trash"></i>
+          </button>
+        </td> 
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

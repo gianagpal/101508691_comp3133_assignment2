@@ -1,1 +1,73 @@
-<p>employee-edit works!</p>
+<div class="container mt-4">
+  <h2 class="mb-4">Edit Employee</h2>
+
+  <div *ngIf="loading" class="alert alert-info">
+    Loading employee...
+  </div>
+
+  <div *ngIf="error" class="alert alert-danger">
+    {{ error }}
+  </div>
+
+  <form *ngIf="!loading" (ngSubmit)="onSubmit()">
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label>First Name</label>
+        <input class="form-control" [(ngModel)]="employee.first_name" name="first_name" required />
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <label>Last Name</label>
+        <input class="form-control" [(ngModel)]="employee.last_name" name="last_name" required />
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <label>Email</label>
+        <input class="form-control" [(ngModel)]="employee.email" name="email" required />
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <label>Gender</label>
+        <select class="form-control" [(ngModel)]="employee.gender" name="gender">
+          <option>Male</option>
+          <option>Female</option>
+          <option>Other</option>
+        </select>
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <label>Designation</label>
+        <input class="form-control" [(ngModel)]="employee.designation" name="designation" required />
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <label>Salary</label>
+        <input type="number" class="form-control" [(ngModel)]="employee.salary" name="salary" required />
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <label>Date of Joining</label>
+        <input
+            type="date"
+            class="form-control"
+            [(ngModel)]="employee.date_of_joining"
+            name="date_of_joining"
+            required
+            />
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <label>Department</label>
+        <input class="form-control" [(ngModel)]="employee.department" name="department" required />
+      </div>
+
+      <div class="col-md-12 mb-3">
+        <label>New Profile Picture (optional)</label>
+        <input type="file" class="form-control" (change)="onFileChange($event)" accept="image/*" />
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-warning me-2">Update Employee</button>
+    <a routerLink="/employees" class="btn btn-secondary">Back</a>
+  </form>
+</div>
