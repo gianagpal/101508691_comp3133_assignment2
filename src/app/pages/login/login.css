@@ -1,0 +1,9 @@
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+}
+
+.card {
+  border-radius: 12px;
+}

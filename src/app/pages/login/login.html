@@ -1,1 +1,36 @@
-<p>login works!</p>
+<div class="container mt-5">
+  <div class="card p-4 shadow">
+    <h2 class="text-center mb-4">Login</h2>
+
+    <div *ngIf="error" class="alert alert-danger">
+      {{ error }}
+    </div>
+
+    <div class="mb-3">
+      <input
+        class="form-control"
+        placeholder="Email or Username"
+        [(ngModel)]="usernameOrEmail"
+        name="usernameOrEmail"
+      />
+    </div>
+
+    <div class="mb-3">
+      <input
+        type="password"
+        class="form-control"
+        placeholder="Password"
+        [(ngModel)]="password"
+        name="password"
+      />
+    </div>
+
+    <button type="button" class="btn btn-primary w-100" (click)="onLogin()">
+      Login
+    </button>
+
+    <div class="text-center mt-3">
+      <a routerLink="/signup">Signup</a>
+    </div>
+  </div>
+</div>
