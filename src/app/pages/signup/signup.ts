@@ -21,8 +21,29 @@ export class Signup {
   onSignup(): void {
     this.error = '';
 
-    if (!this.username || !this.email || !this.password) {
-      this.error = 'Please fill in all fields';
+    if (!this.username.trim()) {
+      this.error = 'Username is required.';
+      return;
+    }
+
+    if (!this.email.trim()) {
+      this.error = 'Email is required.';
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.email)) {
+      this.error = 'Please enter a valid email.';
+      return;
+    }
+
+    if (!this.password.trim()) {
+      this.error = 'Password is required.';
+      return;
+    }
+
+    if (this.password.length < 6) {
+      this.error = 'Password must be at least 6 characters.';
       return;
     }
 

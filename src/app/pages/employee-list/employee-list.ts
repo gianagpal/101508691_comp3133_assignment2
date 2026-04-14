@@ -15,6 +15,7 @@ export class EmployeeList implements OnInit {
   error = '';
   loading = true;
   searchTerm = '';
+  username='';
 
   constructor(
     private auth: AuthService,
@@ -24,6 +25,7 @@ export class EmployeeList implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.username = this.auth.getUsername();
     this.loadEmployees();
   }
 

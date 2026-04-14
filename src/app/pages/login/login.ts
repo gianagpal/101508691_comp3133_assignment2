@@ -20,6 +20,11 @@ export class Login {
   onLogin(): void {
     this.error = '';
 
+    if (!this.usernameOrEmail.trim() || !this.password.trim()) {
+      this.error = 'Username/email and password are required.';
+      return;
+    }
+
     this.auth.login(this.usernameOrEmail, this.password).subscribe({
       next: (res) => {
         if (res.success) {

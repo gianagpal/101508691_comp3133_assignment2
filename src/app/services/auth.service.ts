@@ -18,47 +18,74 @@ export class AuthService {
   }
 
   login(usernameOrEmail: string, password: string): Observable<any> {
-    const body = {
-      query: `
-        query Login($input: LoginInput!) {
-          login(input: $input) {
-            success
-            message
-            token
+  const body = {
+    query: `
+      query Login($input: LoginInput!) {
+        login(input: $input) {
+          success
+          message
+          token
+          user {
+            username
           }
         }
-      `,
-      variables: {
-        input: { usernameOrEmail, password }
       }
-    };
+    `,
+    variables: {
+      input: { usernameOrEmail, password }
+    }
+  };
 
-    return this.http.post<any>(this.graphqlUrl, body).pipe(
-      map((res) => res.data.login)
-    );
-  }
+  return this.http.post<any>(this.graphqlUrl, body).pipe(
+    map((res) => {
+      const data = res.data.login;
+      if (data.success && data.token) {
+        localStorage.setItem('token', data.token);
+      }
+      if (data.success && data.user?.username) {
+        localStorage.setItem('username', data.user.username);
+      }
+      return data;
+    })
+  );
+}
 
   signup(username: string, email: string, password: string): Observable<any> {
-    const body = {
-      query: `
-        mutation Signup($input: SignupInput!) {
-          signup(input: $input) {
-            success
-            message
-            token
+  const body = {
+    query: `
+      mutation Signup($input: SignupInput!) {
+        signup(input: $input) {
+          success
+          message
+          token
+          user {
+            username
           }
         }
-      `,
-      variables: {
-        input: { username, email, password }
       }
-    };
+    `,
+    variables: {
+      input: { username, email, password }
+    }
+  };
 
-    return this.http.post<any>(this.graphqlUrl, body).pipe(
-      map((res) => res.data.signup)
-    );
-  }
+  return this.http.post<any>(this.graphqlUrl, body).pipe(
+    map((res) => {
+      const data = res.data.signup;
+      if (data.success && data.token) {
+        localStorage.setItem('token', data.token);
+      }
+      if (data.success && data.user?.username) {
+        localStorage.setItem('username', data.user.username);
+      }
+      return data;
+    })
+  );
+}
 
+  getUsername(): string {
+  return localStorage.getItem('username') || '';
+}
   getAllEmployees(): Observable<any[]> {
     const body = {
       query: `
@@ -237,5 +264,6 @@ export class AuthService {
 
   logout(): void {
     localStorage.removeItem('token');
+  localStorage.removeItem('username');
   }
 }

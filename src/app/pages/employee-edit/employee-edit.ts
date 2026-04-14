@@ -12,6 +12,7 @@ import { AuthService } from '../../services/auth.service';
 })
 export class EmployeeEdit implements OnInit {
   id = '';
+  username = '';
   employee: any = {
     first_name: '',
     last_name: '',
@@ -35,33 +36,47 @@ export class EmployeeEdit implements OnInit {
     private cdr: ChangeDetectorRef
   ) {}
 
+  private formatDateForInput(value: any): string {
+    if (!value) return '';
+
+    const d = new Date(value);
+    if (isNaN(d.getTime())) return '';
+
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+
   ngOnInit(): void {
+    this.username = this.auth.getUsername();
     this.id = this.route.snapshot.paramMap.get('id') || '';
 
     this.auth.getEmployeeById(this.id).subscribe({
-  next: (data) => {
-    this.ngZone.run(() => {
-      this.employee = {
-        ...data,
-        date_of_joining: data?.date_of_joining
-          ? new Date(data.date_of_joining).toISOString().split('T')[0]
-          : '',
-        employee_photo_base64: ''
-      };
-      this.loading = false;
-      this.error = '';
-      this.cdr.detectChanges();
+      next: (data) => {
+        this.ngZone.run(() => {
+          console.log('EDIT EMPLOYEE DATA:', data);
+
+          this.employee = {
+            ...data,
+            date_of_joining: this.formatDateForInput(data?.date_of_joining),
+            employee_photo_base64: ''
+          };
+
+          this.loading = false;
+          this.error = '';
+          this.cdr.detectChanges();
+        });
+      },
+      error: (err) => {
+        this.ngZone.run(() => {
+          console.error('EDIT LOAD ERROR:', err);
+          this.error = 'Failed to load employee';
+          this.loading = false;
+          this.cdr.detectChanges();
+        });
+      }
     });
-  },
-  error: (err) => {
-    this.ngZone.run(() => {
-      console.error(err);
-      this.error = 'Failed to load employee';
-      this.loading = false;
-      this.cdr.detectChanges();
-    });
-  }
-});
   }
 
   onFileChange(event: any): void {
@@ -75,7 +90,38 @@ export class EmployeeEdit implements OnInit {
     reader.readAsDataURL(file);
   }
 
+  validateEmployee(): string {
+    if (!this.employee.first_name?.trim()) return 'First name is required.';
+    if (!this.employee.last_name?.trim()) return 'Last name is required.';
+    if (!this.employee.email?.trim()) return 'Email is required.';
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(this.employee.email)) return 'Please enter a valid email.';
+
+    if (!['Male', 'Female', 'Other'].includes(this.employee.gender)) {
+      return 'Please select a valid gender.';
+    }
+
+    if (!this.employee.designation?.trim()) return 'Designation is required.';
+    if (!this.employee.salary || Number(this.employee.salary) < 1000) {
+      return 'Salary must be at least 1000.';
+    }
+
+    if (!this.employee.date_of_joining) return 'Date of joining is required.';
+    if (!this.employee.department?.trim()) return 'Department is required.';
+
+    return '';
+  }
+
   onSubmit(): void {
+    this.error = '';
+
+    const validationError = this.validateEmployee();
+    if (validationError) {
+      this.error = validationError;
+      return;
+    }
+
     const updateInput: any = {
       first_name: this.employee.first_name,
       last_name: this.employee.last_name,
@@ -104,5 +150,10 @@ export class EmployeeEdit implements OnInit {
         this.error = 'Update failed';
       }
     });
+  }
+
+  logout(): void {
+    this.auth.logout();
+    this.router.navigate(['/login']);
   }
 }
