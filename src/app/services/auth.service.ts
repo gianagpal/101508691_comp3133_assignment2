@@ -6,7 +6,7 @@ import { Observable, map } from 'rxjs';
   providedIn: 'root'
 })
 export class AuthService {
-  private graphqlUrl = 'http://localhost:4000/graphql';
+  private graphqlUrl = 'https://comp3133-101508691-assignment1.onrender.com';
 
   constructor(private http: HttpClient) {}
 
